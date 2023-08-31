@@ -1,0 +1,51 @@
+.wrapper{
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.weekday{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.subject{
+    text-align: center;
+    border: 1px solid white;
+    color: white;
+    width: 6em;
+    height: 2.2em;
+    padding: 0.1em;
+    font-size: 1.5em;
+}
+
+.houritem{
+    text-align: center;
+    border: 1px solid white;
+    color: white;
+    padding: 0.1em;
+    margin: 0;
+    font-size: 1.5em;
+    width: 8em;
+    height: 2.2em;
+}
+
+.subjectroom {
+    font-size: 0.5em;
+}
+
+.livestatustext{
+    font-size: 1.8em;
+    color: white;
+    margin-bottom: 1em;
+}
+
+.timetable{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column ;
+}
