@@ -1,88 +1,69 @@
 import { HourItem } from "../../models/HourItem";
-import { Subject } from "../../models/Subject";
 import { Weekday } from "../../models/Weekday";
 import styles from "./TimeTable.module.scss";
 
-export default function TimeTable() {
-    const hours: HourItem[] = [
-        new HourItem("8:00", "8:45"),
-        new HourItem("8:45", "9:30"),
-        new HourItem("9:50", "10:35"),
-        new HourItem("10:35", "11:20"),
-        new HourItem("11:40", "12:25"),
-        new HourItem("12:25", "13:10"),
-        new HourItem("13:40", "14:25"),
-        new HourItem("14:25", "15:10"),
-        new HourItem("15:10", "16:00"),
-        new HourItem("16:00", "16:45"),
-    ];
-    const weekdays: Weekday[] = [
-        new Weekday("Montag", [
-            new Subject("Math", "Thc", "E410"),
-            new Subject("Math", "Thc", "E410"),
-            new Subject("German", "ABD", "E410"),
-            new Subject("German", "ABD", "E410"),
-            new Subject("English", "JKL", "E410"),
-            new Subject("English", "JKL", "E410"),
-        ]),
-        new Weekday("Dienstag", [
-            new Subject("IT", "Thc", "E215"),
-            new Subject("IT", "Thc", "E215"),
-            new Subject("Biology", "GHJ", "A205"),
-            new Subject("Biology", "GHJ", "A205"),
-            new Subject("English", "JKL", "E410"),
-            new Subject("English", "JKL", "E410"),
-        ]),
-        new Weekday("Mittwoch", [
-            new Subject("IT", "Thc", "E215"),
-            new Subject("IT", "Thc", "E215"),
-            new Subject("Biology", "GHJ", "A205"),
-            new Subject("Biology", "GHJ", "A205"),
-            new Subject("English", "JKL", "E410"),
-            new Subject("English", "JKL", "E410"),
-            new Subject("English", "JKL", "E410"),
-            new Subject("English", "JKL", "E410"),
-        ]),
-        new Weekday("Donnerstag", [
-            new Subject("IT", "Thc", "E215"),
-            new Subject("IT", "Thc", "E215"),
-            new Subject("Biology", "GHJ", "A205"),
-            new Subject("Biology", "GHJ", "A205"),
-            new Subject("English", "JKL", "E410"),
-            new Subject("English", "JKL", "E410"),
-            new Subject("English", "JKL", "E410"),
-            new Subject("English", "JKL", "E410"),
-        ]),
-        new Weekday("Freitag", [
-            new Subject("IT", "Thc", "E215"),
-            new Subject("IT", "Thc", "E215"),
-            new Subject("Biology", "GHJ", "A205"),
-            new Subject("Biology", "GHJ", "A205"),
-            new Subject("English", "JKL", "E410"),
-            new Subject("English", "JKL", "E410"),
-            new Subject("English", "JKL", "E410"),
-        ]),
-    ];
+type Props = {
+    accent1: string,
+    accent2: string,
+    accent3: string,
+    fontfamily: string,
+    hours: HourItem[],
+    weekdays: Weekday[],
+}
 
+export default function TimeTable(props: Props) {
+    let lastHighlighted = "";
+
+    function isWeekend(day: number): boolean {
+        return day > 5;
+    }
+
+    function getCurrentHighlightIndex(date: Date): number{
+        const currentTime = parseInt(date.getHours().toString() + date.getMinutes().toString());
+        return props.hours.findIndex(x => parseInt(x.Start.replace(":", "")) <= currentTime &&  parseInt(x.End.replace(":", "")) > currentTime);
+    }
+
+    function highlightItem(){
+        const date = new Date();
+        const dayOfWeek = date.getDay();
+
+        if(lastHighlighted.length > 0)
+            document.getElementById(lastHighlighted)?.classList.remove(styles.itemhighlighted);
+
+        if(isWeekend(dayOfWeek)){
+            console.log("Wochenende");
+            return;
+        }
+
+        const item = getCurrentHighlightIndex(date);
+
+        if(item === -1)
+            return;
+    
+        document.getElementById(`item${dayOfWeek - 1}_${item}`)?.classList.add(styles.itemhighlighted);
+        lastHighlighted = `item${dayOfWeek - 1}_${item}`;
+    }
+
+    highlightItem();
+    
     return (
-        <div className={styles.timetable}>
+        <div className={styles.timetable} style={{fontFamily: props.fontfamily}}>
             <div className={styles.livestatustext}>Schulschluss</div>
             <div className={styles.wrapper}>
                 <div className={styles.weekday}>
-                    <div className={styles.houritem}>Stunden</div>
-                    {hours.map((hour, i) => (
-                        <div key={i} className={styles.houritem}>
+                    <div className={styles.houritem} style={{color: props.accent2}}>Stunden</div>
+                    {props.hours.map((hour, i) => (
+                        <div key={i} className={styles.houritem} style={{color: props.accent1}}>
                             {hour.Start} - {hour.End}
                         </div>
                     ))}
                 </div>
-                {weekdays.map((weekday, i) => (
+                {props.weekdays.map((weekday, i) => (
                     <div key={i} className={styles.weekday}>
-                        <div className={styles.subject}>{weekday.name}</div>
-                        {Array.from({ length: hours.length }).map((_, j) => (
-                            <div key={j} className={styles.subject}>
+                        <div className={styles.subject} style={{color: props.accent2}}>{weekday.name}</div>
+                        {props.hours.map((_, j) => (
+                            <div key={j} id={`item${i}_${j}`} style={{color: props.accent3}} className={styles.subject}>
                                 <div
-                                    id={`item${i}_${j}`}
                                     style={{ display: j <= weekday.subjects.length ? "block" : "none" }}
                                 >
                                     {j < weekday.subjects.length && (
