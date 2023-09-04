@@ -1,6 +1,6 @@
 export class HourItem {
     constructor(
-        public Start: string,
-        public End: string,
+        public start: string,
+        public end: string,
     ) {}
 }

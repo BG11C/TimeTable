@@ -1,7 +1,7 @@
 export class Subject {
     constructor(
-        public Name: string,
-        public Teacher: string,
-        public Room: string,
+        public name: string,
+        public teacher: string,
+        public room: string,
     ) {}
 }

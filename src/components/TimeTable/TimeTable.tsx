@@ -1,8 +1,8 @@
 import { HourItem } from "../../models/HourItem";
-import { Subject } from "../../models/Subject";
 import { Weekday } from "../../models/Weekday";
 import styles from "./TimeTable.module.scss";
 import {useState, useEffect} from 'react';
+
 type Props = {
     accent1: string,
     accent2: string,
@@ -21,7 +21,7 @@ export default function TimeTable(props: Props) {
     }
 
     function getCurrentHighlightIndex(currentTime: number, currentWeekday: Weekday): number{
-        const index = props.hours.findIndex(x => parseInt(x.Start.replace(":", "")) <= currentTime && parseInt(x.End.replace(":", "")) > currentTime);
+        const index = props.hours.findIndex(x => parseInt(x.start.replace(":", "")) <= currentTime && parseInt(x.end.replace(":", "")) > currentTime);
         if(index >= currentWeekday.subjects.length)
             return -1;
         return index;
@@ -32,7 +32,7 @@ export default function TimeTable(props: Props) {
         if(currentHighlightIndex + 1 <  currentDay.subjects.length){
             const nextHour = currentDay.subjects[currentHighlightIndex + 1];
             const currentHour = currentDay.subjects[currentHighlightIndex];
-            if(nextHour.Name === currentHour.Name)  {
+            if(nextHour.name === currentHour.name)  {
                 return 1 + detectDoubleLessons(currentHighlightIndex + 1, currentDay);
             }
         }
@@ -51,11 +51,11 @@ export default function TimeTable(props: Props) {
         const hoursLeft = detectDoubleLessons(currentHighlightIndex, currentDay);
         console.log(hoursLeft);
         //only the current one left:
-        if(hoursLeft == 1) {
-            return subractTime(parseInt(props.hours[currentHighlightIndex].End.replace(":", "")), currentTime) + " Minuten"; 
+        if(hoursLeft === 1) {
+            return subractTime(parseInt(props.hours[currentHighlightIndex].end.replace(":", "")), currentTime) + " Minuten"; 
         }
 
-        return subractTime(parseInt(props.hours[currentHighlightIndex + hoursLeft - 1].End.replace(":", "")), currentTime) + " Minuten"; 
+        return subractTime(parseInt(props.hours[currentHighlightIndex + hoursLeft - 1].end.replace(":", "")), currentTime) + " Minuten"; 
     }
 
     function highlightItem(){
@@ -75,7 +75,7 @@ export default function TimeTable(props: Props) {
         const currentHighlightIndex = getCurrentHighlightIndex(currentTime, currentWeekday);
         //Break or no more school
         if(currentHighlightIndex === -1) {
-            if(currentTime > parseInt(props.hours[currentWeekday.subjects.length].End.replace(":", ""))){
+            if(currentTime > parseInt(props.hours[currentWeekday.subjects.length].end.replace(":", ""))){
                 //no more school
                 setStatusText("Schulschluss");
                 return;
@@ -88,7 +88,7 @@ export default function TimeTable(props: Props) {
         const subject = currentWeekday.subjects[currentHighlightIndex];
         const timeTillNextHour = GetTimeToNextLesson(currentHighlightIndex, currentWeekday, currentTime);
         
-        setStatusText(`${subject.Name} bei ${subject.Teacher} in ${subject.Room} Noch ${timeTillNextHour}`);
+        setStatusText(`${subject.name} bei ${subject.teacher} in ${subject.room} Noch ${timeTillNextHour}`);
 
         document.getElementById(`item${dayOfWeek}_${currentHighlightIndex}`)?.classList.add(styles.itemhighlighted);
         lastHighlighted = `item${dayOfWeek}_${currentHighlightIndex}`;
@@ -105,7 +105,7 @@ export default function TimeTable(props: Props) {
                     <div className={styles.houritem} style={{color: props.accent2}}>Stunden</div>
                     {props.hours.map((hour, i) => (
                         <div key={i} className={styles.houritem} style={{color: props.accent1}}>
-                            {hour.Start} - {hour.End}
+                            {hour.start} - {hour.end}
                         </div>
                     ))}
                 </div>
@@ -119,8 +119,8 @@ export default function TimeTable(props: Props) {
                                 >
                                     {j < weekday.subjects.length && (
                                         <div>
-                                            {weekday.subjects[j].Name}
-                                            <div className={styles.subjectroom}>{weekday.subjects[j].Room}</div>
+                                            {weekday.subjects[j].name}
+                                            <div className={styles.subjectroom}>{weekday.subjects[j].room}</div>
                                             <div className={styles.flex}></div>
                                         </div>
                                     )}
